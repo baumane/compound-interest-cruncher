@@ -7,5 +7,14 @@
     <string name="hello2">1. Enter either the Present Value or the Discount Rate (i) of the flows.\n2. Enter the Periods/Year.\n3. Enter the Period and Amount for each payment.\n4. Hit solve.</string>
     <string name="annuity_help">1. Fill out three of the five fields (Present Value, Interest Rate/Year, Number of Periods, Future Value, and Payment Amount/Period), but you must choose either Present Value or Future Value, not both.\n2. (Optional) Fill in the number of Periods/Year.\n3. Choose an Ordinary Annuity or Annuity Due.\n4. Hit Solve, Ignore PV to calculate without Present Value or hit Solve, Ignore FV to calculate without Future Value.  Amortization Table ignores FV, so three of the remaining four fields must be set.</string>
     <string name="bond_help">1. Fill out three of the four fields (Present Value, Interest Rate/Year, Number of Periods, and Payment Amount/Period).  Future Value is assumed to be 1000.\n2. (Optional) Fill in the number of Periods/Year.  Semiannual bonds will have a value of 2.\n3. Hit solve to get the value for the blank field. </string>
+    <string name="about_dialog">Compound Interest Cruncher\nCopyright (C) 2013-2015  Erick Bauman\n\nThis program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.\n\nThe source code of this program can be found at\n&lt;https://github.com/baumane/compound-interest-cruncher&gt;.\n\n
+A copy of the GNU General Public License is included with the source code
+and can also be found at &lt;http://www.gnu.org/licenses&gt;. </string>
 
 </resources>

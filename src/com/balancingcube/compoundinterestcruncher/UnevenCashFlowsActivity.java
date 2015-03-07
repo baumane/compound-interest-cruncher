@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -53,10 +54,7 @@ public class UnevenCashFlowsActivity extends Activity {
 	RadioButton ord;//Ordinary annuity
 	RadioButton due;//Annuity due
 	
-	LinearLayout flowAmount;
-    LinearLayout flowPeriod;
-    LinearLayout flowRemove;
-	
+    LinearLayout flowsLayout;
 	
     /** Called when the activity is first created. */
     @Override
@@ -64,17 +62,12 @@ public class UnevenCashFlowsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cashflows);
         context = this;
-        flowAmount = (LinearLayout)findViewById(R.id.flow_amount);
-        flowPeriod = (LinearLayout)findViewById(R.id.flow_period);
-        flowRemove = (LinearLayout)findViewById(R.id.flow_remove);
+        flowsLayout = (LinearLayout)findViewById(R.id.flows);
         
         /**
          * For now, just remove the initial fields there and make them only accessible via flowAdd
          */
-        flowAmount.removeViewAt(1);
-        flowPeriod.removeViewAt(1);
-        flowRemove.removeViewAt(1);
-        
+        flowsLayout.removeViewAt(0);//Remove the horizontal linear layout containing the dummy flow
         
         
         Button solve = (Button) findViewById(R.id.solver);
@@ -88,22 +81,28 @@ public class UnevenCashFlowsActivity extends Activity {
         	public void onClick(View view) {
         		EditText amount = new EditText(context);
         		amount.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_SIGNED|InputType.TYPE_NUMBER_FLAG_DECIMAL);//Allow for negative amounts and fractional amounts
+        		//Set the weight.  It's unintuitive because Java.
+        		amount.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 6));
         		EditText period = new EditText(context);
         		period.setInputType(InputType.TYPE_CLASS_NUMBER);
+        		period.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 6));
         		final Button remove = new Button(context);
         		remove.setText("X");
+        		remove.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 2));
+        		LinearLayout container = new LinearLayout(context);
+        		container.setWeightSum(14);
         		//Remove these three fields on click
         		remove.setOnClickListener(new View.OnClickListener() {
                 	public void onClick(View view) {
-                		int indexToRemove = ((LinearLayout)remove.getParent()).indexOfChild(remove);
-                		flowAmount.removeViewAt(indexToRemove);
-                		flowPeriod.removeViewAt(indexToRemove);
-                		flowRemove.removeViewAt(indexToRemove);
+                		int indexToRemove = ((LinearLayout)remove.getParent().getParent()).indexOfChild((LinearLayout)remove.getParent());
+                		flowsLayout.removeViewAt(indexToRemove);
                 	}
         		});
-        		flowAmount.addView(amount);
-        		flowPeriod.addView(period);
-        		flowRemove.addView(remove);
+        		container.addView(period);
+        		container.addView(amount);
+        		container.addView(remove);
+        		
+        		flowsLayout.addView(container);//Add after previous flows
         	}
         });
         
@@ -120,16 +119,14 @@ public class UnevenCashFlowsActivity extends Activity {
 	    			else
 	    				pyrd = Double.parseDouble(pyrs);
 	    			
-	    			double[] flowAmounts = new double[flowAmount.getChildCount()-1];//-1 because one of the children is the header
+	    			double[] flowAmounts = new double[flowsLayout.getChildCount()];
+	    			double[] flowPeriods = new double[flowsLayout.getChildCount()];
 	    			for( int i = 0; i < flowAmounts.length; i++ )
 	    			{
-	    				flowAmounts[i] = Double.parseDouble(((EditText)flowAmount.getChildAt(i+1)).getText().toString());
+	    				LinearLayout flow = (LinearLayout)flowsLayout.getChildAt(i);
+	    				flowAmounts[i] = Double.parseDouble(((EditText)flow.getChildAt(1)).getText().toString());
+	    				flowPeriods[i] = Double.parseDouble(((EditText)flow.getChildAt(0)).getText().toString());
 	    			}
-	    			double[] flowPeriods = new double[flowPeriod.getChildCount()-1];//-1 because one of the children is the header
-	    			for( int i = 0; i < flowPeriods.length; i++ )
-	    			{
-	    				flowPeriods[i] = Double.parseDouble(((EditText)flowPeriod.getChildAt(i+1)).getText().toString());
-	    			}	
 	    			
 	    			String title = "";
 	    			String result = "";
@@ -217,7 +214,7 @@ public class UnevenCashFlowsActivity extends Activity {
 			nd = flowPeriods[i];
 			fvd = flowAmounts[i];
 			pvSum += CompoundCruncher.findPV(id, nd, fvd);
-			System.out.println("pvSum "+pvSum);
+			//System.out.println("pvSum "+pvSum);
 		}
 		return pvSum;
     }
